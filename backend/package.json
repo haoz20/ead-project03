@@ -1,0 +1,21 @@
+{
+  "name": "graphql-sql-nosql-demo",
+  "version": "1.0.0",
+  "description": "GraphQL demo combining SQL users and MongoDB products in one query",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.11.3",
+    "@apollo/gateway": "^2.10.0",
+    "@apollo/subgraph": "^2.10.0",
+    "dotenv": "^16.4.7",
+    "graphql": "^16.10.0",
+    "graphql-tag": "^2.12.6",
+    "mongodb": "^6.13.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}
