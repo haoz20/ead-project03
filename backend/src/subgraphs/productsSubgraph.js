@@ -2,7 +2,7 @@ const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { buildSubgraphSchema } = require("@apollo/subgraph");
 const gql = require("graphql-tag");
-const { MongoClient, ObjectId } = require("mongodb");
+const { MongoClient } = require("mongodb");
 
 async function initMongoDb({ mongodbUri, mongodbDbName }) {
   const client = new MongoClient(mongodbUri);
@@ -14,9 +14,9 @@ async function initMongoDb({ mongodbUri, mongodbDbName }) {
   const existing = await products.countDocuments();
   if (existing === 0) {
     await products.insertMany([
-      { name: "Mechanical Keyboard", price: 89.99, inStock: true },
-      { name: "4K Monitor", price: 299.0, inStock: true },
-      { name: "USB-C Dock", price: 59.5, inStock: false }
+      { _id: "1", name: "Mechanical Keyboard", price: 89.99, inStock: true },
+      { _id: "2", name: "4K Monitor", price: 299.0, inStock: true },
+      { _id: "3", name: "USB-C Dock", price: 59.5, inStock: false }
     ]);
   }
 
@@ -56,7 +56,7 @@ async function startProductsSubgraph({ port, mongodbUri, mongodbDbName }) {
           .toArray();
 
         return docs.map((doc) => ({
-          id: doc._id.toString(),
+          id: String(doc._id),
           name: doc.name,
           price: doc.price,
           inStock: doc.inStock
@@ -65,13 +65,13 @@ async function startProductsSubgraph({ port, mongodbUri, mongodbDbName }) {
       product: async (_, { id }) => {
         const doc = await mongoState.db
           .collection("products")
-          .findOne({ _id: new ObjectId(id) });
+          .findOne({ _id: String(id) });
         if (!doc) {
           return null;
         }
 
         return {
-          id: doc._id.toString(),
+          id: String(doc._id),
           name: doc.name,
           price: doc.price,
           inStock: doc.inStock
@@ -82,13 +82,13 @@ async function startProductsSubgraph({ port, mongodbUri, mongodbDbName }) {
       __resolveReference: async (reference) => {
         const doc = await mongoState.db
           .collection("products")
-          .findOne({ _id: new ObjectId(reference.id) });
+          .findOne({ _id: String(reference.id) });
         if (!doc) {
           return null;
         }
 
         return {
-          id: doc._id.toString(),
+          id: String(doc._id),
           name: doc.name,
           price: doc.price,
           inStock: doc.inStock
